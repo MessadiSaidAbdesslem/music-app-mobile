@@ -1,18 +1,3 @@
-class DataModel {
-  late List<Mp3Model> mp3Files;
-
-  DataModel(this.mp3Files);
-
-  DataModel.fromJson(Map<String, dynamic> json) {
-    if (json['Mp3Files'] != null) {
-      mp3Files = [];
-      json['Mp3Files'].forEach((v) {
-        mp3Files.add(Mp3Model.fromJson(v));
-      });
-    }
-  }
-}
-
 class Mp3Model {
   final String path;
   final String displayName;

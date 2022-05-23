@@ -24,9 +24,6 @@ class MainActivity : FlutterActivity() {
                     stopService(Intent(this, PlayerService::class.java))
                     result.success("Stopped!")
                 }
-                else -> {
-                    result.notImplemented()
-                }
             }
         }
     }

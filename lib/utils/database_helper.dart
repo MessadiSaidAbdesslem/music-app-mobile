@@ -1,20 +1,21 @@
 import 'dart:async';
 
+import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "favorite.db";
-  static final _databaseVersion = 1;
-  static final _favorite_table = "FAVORITE";
-  static final _columnId = "id";
-  static final _columnPath = "PATH";
-  static final _columnDisplayName = "DISPLAYNAME";
-  static final _columnAlbum = "ALBUM";
-  static final _columnAlbumImage = "ALBUMIMAGE";
-  static final _columnArtist = "ARTIST";
-  static final _columnDateAdded = "ADDEDAT";
-  static final _columnSize = "SIZE";
-  static final _columnDuration = "DURATION";
+  static const _databaseName = "favorite.db";
+  static const _databaseVersion = 1;
+  static const _favoriteTable = "FAVORITE";
+  static const _columnId = "id";
+  static const _columnPath = "PATH";
+  static const _columnDisplayName = "DISPLAYNAME";
+  static const _columnAlbum = "ALBUM";
+  static const _columnAlbumImage = "ALBUMIMAGE";
+  static const _columnArtist = "ARTIST";
+  static const _columnDateAdded = "ADDEDAT";
+  static const _columnSize = "SIZE";
+  static const _columnDuration = "DURATION";
 
   DatabaseHelper._privateContructor();
   static final DatabaseHelper instance = DatabaseHelper._privateContructor();
@@ -26,6 +27,36 @@ class DatabaseHelper {
     return _database;
   }
 
+  Future<void> insertSongToFavorite(SongInfo song) async {
+    Database? db = await instance.database;
+    int result = await db!.insert(_favoriteTable, {
+      _columnPath: song.filePath,
+      _columnDisplayName: song.displayName,
+      _columnArtist: song.artist,
+    });
+    print(result);
+  }
+
+  Future<void> deleteSongFromFavorite(SongInfo song) async {
+    Database? db = await instance.database;
+    int result = await db!.delete(
+      _favoriteTable,
+      where:
+          "$_columnPath = ? AND $_columnDisplayName = ? AND $_columnArtist = ?",
+      whereArgs: [song.filePath, song.displayName, song.artist],
+    );
+  }
+
+  Future<List<Map<String, Object?>>> songIsFavorite(SongInfo song) async {
+    Database? db = await instance.database;
+    List<Map<String, Object?>> res = await db!.query(_favoriteTable,
+        where:
+            "$_columnPath = ? AND $_columnDisplayName = ? AND $_columnArtist = ?",
+        whereArgs: [song.filePath, song.displayName, song.artist]);
+    print(res);
+    return res;
+  }
+
   Future<Database> _initDatabase() async {
     String path = await getDatabasesPath() + _databaseName;
     return await openDatabase(path,
@@ -34,7 +65,7 @@ class DatabaseHelper {
 
   FutureOr<void> _onCreate(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE $_favorite_table (
+    CREATE TABLE $_favoriteTable (
       $_columnId INTEGER PRIMARY KEY AUTOINCREMENT,
       $_columnPath TEXT,
       $_columnDisplayName TEXT,
@@ -48,13 +79,13 @@ class DatabaseHelper {
 ''');
   }
 
-  Future<int> insert(Map<String, dynamic> row) async {
+  Future<void> insert(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db!.insert(_favorite_table, row);
+    await db!.insert(_favoriteTable, row);
   }
 
   Future<List<Map<String, dynamic>>> querryAllRows() async {
     Database? db = await instance.database;
-    return await db!.query(_favorite_table);
+    return await db!.query(_favoriteTable);
   }
 }

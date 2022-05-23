@@ -4,6 +4,7 @@ import 'package:tp_8_music_app/controllers/songs_controller.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+  static const route = "/home";
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -36,6 +37,11 @@ class _HomePageState extends State<HomePage> {
                         borderOnForeground: true,
                         borderRadius: BorderRadius.circular(5),
                         child: ListTile(
+                          onTap: () async {
+                            songController
+                                .startSong(songController.songs[index]);
+                            songController.currentIndex.value = index;
+                          },
                           title: Text(songController.songs.value[index].title),
                           subtitle:
                               Text(songController.songs.value[index].artist),
