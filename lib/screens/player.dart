@@ -40,7 +40,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
             ),
           ),
           const Spacer(),
-          Image.asset("assets/music.jpg"),
+          const CircleAvatar(
+              maxRadius: 140,
+              child: Icon(Icons.music_note, size: 240, color: Colors.white)),
           const Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -81,7 +83,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 Obx(
                   () => IconButton(
                     onPressed: () async {
-                      await controller.toggleCurrentSongFavorite();
+                      await controller.toggleCurrentSongFavorite(context);
                       await controller.updateFavorites();
                     },
                     icon: Icon(

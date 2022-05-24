@@ -1,4 +1,6 @@
 import 'package:audio_manager/audio_manager.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:get/get.dart';
 import 'package:shake/shake.dart';
@@ -113,7 +115,7 @@ class SongController extends GetxController {
     songs.refresh();
   }
 
-  Future<void> toggleCurrentSongFavorite() async {
+  Future<void> toggleCurrentSongFavorite(BuildContext context) async {
     bool songIsFavorite = (await DatabaseHelper.instance
                 .songIsFavorite(songs.value[currentIndex.value]))
             .length >
@@ -121,9 +123,15 @@ class SongController extends GetxController {
     if (songIsFavorite) {
       await DatabaseHelper.instance
           .deleteSongFromFavorite(songs.value[currentIndex.value]);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Song removed from favorites"),
+      ));
     } else {
       await DatabaseHelper.instance
           .insertSongToFavorite(songs.value[currentIndex.value]);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Song added to favorites"),
+      ));
     }
   }
 }
